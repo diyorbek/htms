@@ -37,7 +37,7 @@ void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
 
-int yylex() {
+/* int yylex() {
     int c = getchar();
     if (c == EOF) {
         return 0; // End of file
@@ -68,4 +68,4 @@ int yylex() {
     } else {
         return c;
     }
-}
+} */
