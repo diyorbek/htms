@@ -8,7 +8,7 @@ void yyerror(const char *s);
 char* yytext;
 %}
 
-%token IDENTIFIER COLON SEMICOLON LBRACE RBRACE STRING
+%token IDENTIFIER COLON SEMICOLON LBRACE RBRACE STRING UNIT
 
 %%
 
@@ -17,14 +17,17 @@ scss_file: rule_list;
 rule_list: rule
          | rule_list rule;
 
-rule: IDENTIFIER LBRACE property_list RBRACE;
+rule: selector LBRACE property_list RBRACE;
 
-property_list: property
-             | property_list property;
+nested_rule: selector LBRACE property_list RBRACE;
+
+property_list: property | property_list property | property_list nested_rule;
 
 property: IDENTIFIER COLON value SEMICOLON;
 
-value: STRING;
+value: STRING | UNIT;
+
+selector: IDENTIFIER;
 
 %%
 

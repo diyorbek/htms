@@ -1,3 +1,21 @@
 selector {
-  property: value;
+  property: "value";
+  property: 1;
+  property: -1;
+}
+
+selector1 {
+  property: "value";
+}
+
+selector_2 {
+  property: "value";
+
+  nested-selector_24 {
+    property: "value";
+  }
+}
+
+selector-3 {
+  property: "value";
 }

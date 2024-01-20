@@ -10,8 +10,9 @@
 "}"     { return RBRACE; }
 ":"     { return COLON; }
 ";"     { return SEMICOLON; }
-[a-zA-Z-]+ {  return IDENTIFIER; }
+-?[0-9]+ {  return UNIT; }
 \"[^\"]*\" {  return STRING; }
+[-a-zA-Z0-9_]+ {  return IDENTIFIER; }
 [ \t\n]  { /* Ignore whitespace and newlines */ }
 .       { fprintf(stderr, "Error: Unknown character %s\n", yytext); }
 
