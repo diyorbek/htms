@@ -10,7 +10,7 @@
 "}"     { return RBRACE; }
 ":"     { return COLON; }
 ";"     { return SEMICOLON; }
--?[0-9]+ {  return UNIT; }
+-?[0-9]+[a-z]{0,5} {  return UNIT; }
 \"[^\"]*\" {  return STRING; }
 [-a-zA-Z0-9_]+ {  return IDENTIFIER; }
 [ \t\n]  { /* Ignore whitespace and newlines */ }

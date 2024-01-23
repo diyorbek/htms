@@ -13,6 +13,7 @@ selector_2 {
 
   nested-selector_24 {
     property: "value";
+    property: 23px;
   }
 }
 
