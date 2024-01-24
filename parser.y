@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stack>
+#include "ast.hh"
 
 int yylex(void);
 void yyerror(const char *s);
@@ -10,19 +12,8 @@ void yyerror(const char *s);
 using std::cout;
 using std::endl;
 
-struct Property {
-  std::string name;
-  std::string value;
-};
-
-struct Rule {
-  std::string selector;
-  std::vector<Property> properties;
-};
-
-struct Sheet {
-  std::vector<Rule> rules;
-} sheet;
+Sheet* sheet = new Sheet{};
+std::stack<Sheet*> sheet_stack;
 %}
 
 
@@ -47,29 +38,44 @@ markup_sheet: | rule_list {std::cout<<"file"<<std::endl;};
 
 rule_list: rule | rule_list rule {cout<<($$)<<"\n";};
 
-rule: selector open property_list close | empty_rule {cout<<($1)<<"\n";};
+rule: selector open property_list close | empty_rule {cout<<($1)<<" - rule \n";};
 
-nested_rule: selector open property_list close | empty_rule {cout<<($1)<<"\n";};
+nested_rule: selector open property_list close | empty_rule {cout<<($1)<<" - nested \n";};
 
-empty_rule: selector open close {cout<<($1)<<"\n";};
+empty_rule: selector open close {cout<<($1)<<" - empty\n";};
 
-property_list: property | property_list property | property_list nested_rule | nested_rule {cout<<($1)<<"\n";};
+property_list: property | property_list property | property_list nested_rule | nested_rule {cout<<($1)<<" - prop list \n";};
 
-property: IDENTIFIER COLON value SEMICOLON {cout<<"prop -> "<<($1)<<($2)<<$3<<$4<<endl;};
+property: IDENTIFIER COLON value SEMICOLON {
+  cout<<"rulessize"<<sheet_stack.top()->rules.size()<<endl;
+  sheet_stack.top()->rules.back()->properties.push_back({$1, $3});
+  cout<<"prop -> "<<($1)<<($2)<<$3<<$4<<endl;
+  };
 
-value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER | value UNIT | value IDENTIFIER {cout<<($1)<<"\n";};
+value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER | value UNIT | value IDENTIFIER {cout<<($1)<<" - value \n";};
 
-selector: IDENTIFIER {cout<<($1)<<"\n";};
+selector: IDENTIFIER {
+  Rule* rule = new Rule{$1, std::vector<Property>(), new Sheet{}};
+  sheet_stack.top()->rules.push_back(rule);
+  cout<<($1)<<" - selector\n";
+  };
 
-open: LBRACE {cout<<($1)<<"\n";};
+open: LBRACE {
+  if (sheet_stack.size() > 0)
+    sheet_stack.push(sheet_stack.top()->rules.back()->children);
+};
 
-close: RBRACE {cout<<($1)<<"\n";};
+close: RBRACE {
+  cout<<sheet_stack.size()<<endl;
+  sheet_stack.pop();
+};
 
 %%
 
 int main() {
+    sheet_stack.push(sheet);
     yyparse();
-    std::cout<<sheet.rules.size()<<std::endl;
+    print_sheet(sheet);
     return 0;
 }
 
