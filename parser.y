@@ -8,24 +8,25 @@ void yyerror(const char *s);
 char* yytext;
 %}
 
-%token IDENTIFIER COLON SEMICOLON LBRACE RBRACE STRING UNIT
+%token IDENTIFIER COLON SEMICOLON LBRACE RBRACE SINGLE_QUOTE_STRING DOUBLE_QUOTE_STRING UNIT
 
 %%
 
-scss_file: rule_list;
+scss_file: | rule_list;
 
-rule_list: rule
-         | rule_list rule;
+rule_list: rule | rule_list rule;
 
-rule: selector LBRACE property_list RBRACE;
+rule: selector LBRACE property_list RBRACE | empty_rule;
 
-nested_rule: selector LBRACE property_list RBRACE;
+nested_rule: selector LBRACE property_list RBRACE | empty_rule;
 
-property_list: property | property_list property | property_list nested_rule;
+empty_rule: selector LBRACE RBRACE;
+
+property_list: property | property_list property | property_list nested_rule | nested_rule;
 
 property: IDENTIFIER COLON value SEMICOLON;
 
-value: STRING | UNIT;
+value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER | value UNIT | value IDENTIFIER;
 
 selector: IDENTIFIER;
 
@@ -39,36 +40,3 @@ int main() {
 void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
-
-/* int yylex() {
-    int c = getchar();
-    if (c == EOF) {
-        return 0; // End of file
-    } else if (c == '{') {
-        return LBRACE;
-    } else if (c == '}') {
-        return RBRACE;
-    } else if (c == ':') {
-        return COLON;
-    } else if (c == ';') {
-        return SEMICOLON;
-    } else if (c == '"') {
-        int i = 0;
-        while ((c = getchar()) != '"' && c != EOF) {
-            yytext[i++] = c;
-        }
-        yytext[i] = '\0';
-        return STRING;
-    } else if (isalpha(c) || c == '-') {
-        int i = 0;
-        yytext[i++] = c;
-        while (isalnum(c = getchar()) || c == '-') {
-            yytext[i++] = c;
-        }
-        yytext[i] = '\0';
-        ungetc(c, stdin);
-        return IDENTIFIER;
-    } else {
-        return c;
-    }
-} */

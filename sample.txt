@@ -1,11 +1,16 @@
 selector {
-  property: "value";
+  property: 'value';
   property: 1;
   property: -1;
 }
 
 selector1 {
-  property: "value";
+selector12 { }
+selector12 { 
+selector12 { }
+
+}
+
 }
 
 selector_2 {
