@@ -12,13 +12,20 @@ void yyerror(const char *s);
 using std::cout;
 using std::endl;
 
-Sheet* sheet = new Sheet{};
-std::stack<Sheet*> sheet_stack;
+Sheet* sheet;
 %}
 
 
 %union {
-    char * strval;
+    char* strval;
+    
+    Property* property;
+    std::vector<Property*>* property_list;
+    
+    Rule* rule;
+    std::vector<Rule*>* rule_list;
+
+    Sheet* sheet;
 }
 
 %token <strval> IDENTIFIER;
@@ -30,51 +37,93 @@ std::stack<Sheet*> sheet_stack;
 %token <strval> DOUBLE_QUOTE_STRING;
 %token <strval> UNIT;
 
-%type <strval> rule_list rule open property_list property close nested_rule selector empty_rule value;
-
+%type <strval> nested_rule empty_rule;
+%type <strval> value;
+%type <property> property;
+%type <property_list> property_list;
+%type <rule> rule;
+%type <rule_list> rule_list;
+%type <sheet> markup_sheet;
 %%
 
-markup_sheet: | rule_list {std::cout<<"file"<<std::endl;};
+markup_sheet: { $$ = new Sheet{}; } | rule_list {
+    $$ = new Sheet{$1};
+    // cout<<"sheet = "<<(*$$->rules).size()<<endl;
+    sheet = $$;
+  };
 
-rule_list: rule | rule_list rule {cout<<($$)<<"\n";};
+rule_list: rule {
+    $$=new std::vector<Rule*>();
+    $$->push_back($1);
+    // cout<<"list = "<<$$->size()<<endl;
 
-rule: selector open property_list close | empty_rule {cout<<($1)<<" - rule \n";};
+  } | rule_list rule {
+    $$->push_back($2);
+    // cout<<"list = "<<$$->size()<<endl;
+  };
 
-nested_rule: selector open property_list close | empty_rule {cout<<($1)<<" - nested \n";};
+rule: IDENTIFIER LBRACE property_list RBRACE {
+    $$=new Rule{$1, $3};
+  } | empty_rule {
+    // cout<<($$)<<" - rule empty \n";
+  };
 
-empty_rule: selector open close {cout<<($1)<<" - empty\n";};
+nested_rule: IDENTIFIER LBRACE property_list RBRACE | empty_rule {
+    // cout<<($$)<<" - nested \n";
+  };
 
-property_list: property | property_list property | property_list nested_rule | nested_rule {cout<<($1)<<" - prop list \n";};
+empty_rule: IDENTIFIER LBRACE RBRACE {
+    // cout<<($$)<<" - empty\n";
+  };
+
+property_list: property {
+    $$=new std::vector<Property*>();
+    $$->push_back($1);
+  } | property_list property {
+    $$->push_back($2);
+    // cout<<$$->size()<<" - list prop\n";
+  } | property_list nested_rule {
+
+  } | nested_rule {
+    // cout<<($$)<<" - prop list \n";
+  };
 
 property: IDENTIFIER COLON value SEMICOLON {
-  cout<<"rulessize"<<sheet_stack.top()->rules.size()<<endl;
-  sheet_stack.top()->rules.back()->properties.push_back({$1, $3});
-  cout<<"prop -> "<<($1)<<($2)<<$3<<$4<<endl;
+    $$ = new Property{$1, $3};
+    // cout<<"prop -> "<<($1)<<$3<<endl;
   };
 
-value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER | value UNIT | value IDENTIFIER {cout<<($1)<<" - value \n";};
-
-selector: IDENTIFIER {
-  Rule* rule = new Rule{$1, std::vector<Property>(), new Sheet{}};
-  sheet_stack.top()->rules.push_back(rule);
-  cout<<($1)<<" - selector\n";
+value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER 
+  | value UNIT {
+    std::strcpy($$ , (std::string($$) + " " + $2).c_str());
+  } | value IDENTIFIER {
+    std::strcpy($$ , (std::string($$) + " " + $2).c_str());
   };
-
-open: LBRACE {
-  if (sheet_stack.size() > 0)
-    sheet_stack.push(sheet_stack.top()->rules.back()->children);
-};
-
-close: RBRACE {
-  cout<<sheet_stack.size()<<endl;
-  sheet_stack.pop();
-};
 
 %%
 
+void print_sheet(const Sheet* sheet) {
+  if (sheet == nullptr)
+    return;
+
+  using namespace std;
+
+  for (auto& rule : *sheet->rules) {
+    cout << rule->selector << endl;
+    for (auto& property : *rule->properties) {
+      cout << property->name << ":" << property->value << endl;
+    }
+
+    if (rule->children == nullptr)
+      continue;
+
+    print_sheet(rule->children);
+  }
+}
+
 int main() {
-    sheet_stack.push(sheet);
     yyparse();
+    cout<<"=====\n";
     print_sheet(sheet);
     return 0;
 }
