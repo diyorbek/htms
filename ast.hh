@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <stack>
 #include <string>
 #include <vector>
 
@@ -21,3 +19,5 @@ struct Rule {
 struct Sheet {
   std::vector<Rule*>* rules;
 };
+
+void print_sheet(const Sheet* sheet, int indent = 0);

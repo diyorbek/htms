@@ -5,23 +5,23 @@ selector {
 }
 
 selector1 {
-selector12 { }
-selector12 { 
-selector12 { }
-
-}
-
+  selector12 {
+  }
+  selector12 {
+    selector12 {
+    }
+  }
 }
 
 selector_2 {
-  property: "value";
+  property: 'value';
 
   nested-selector_24 {
-    property: "value";
+    property: 'value';
     property: 23px;
   }
 }
 
 selector-3 {
-  property: "value";
+  property: 'value';
 }

@@ -9,24 +9,20 @@
 int yylex(void);
 void yyerror(const char *s);
 
-using std::cout;
-using std::endl;
-using std::vector;
-
 Sheet* sheet;
 %}
 
 
 %union {
-    char* strval;
-    
-    Property* property;
-    std::vector<Property*>* property_list;
-    
-    Rule* rule;
-    std::vector<Rule*>* rule_list;
+  char* strval;
+  
+  Property* property;
+  std::vector<Property*>* property_list;
+  
+  Rule* rule;
+  std::vector<Rule*>* rule_list;
 
-    Sheet* sheet;
+  Sheet* sheet;
 }
 
 %token <strval> IDENTIFIER;
@@ -44,15 +40,15 @@ Sheet* sheet;
 %type <rule> rule;
 %type <rule_list> rule_list;
 %type <sheet> markup_sheet;
-%%
 
+%%
 markup_sheet: { $$ = new Sheet{}; } | rule_list {
     $$ = new Sheet{$1};
     sheet = $$;
   };
 
 rule_list: rule {
-    $$=new vector<Rule*>();
+    $$ = new std::vector<Rule*>();
     $$->push_back($1);
   } | rule_list rule {
     $$->push_back($2);
@@ -69,7 +65,7 @@ rule: IDENTIFIER LBRACE RBRACE {
   };
 
 property_list: property {
-    $$=new vector<Property*>();
+    $$ = new std::vector<Property*>();
     $$->push_back($1);
   } | property_list property {
     $$->push_back($2);
@@ -81,36 +77,18 @@ property: IDENTIFIER COLON value SEMICOLON {
 
 value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER 
   | value UNIT {
-    std::strcpy($$ , (std::string($$) + " " + $2).c_str());
+    std::strcpy($$, (std::string($$) + " " + $2).c_str());
   } | value IDENTIFIER {
-    std::strcpy($$ , (std::string($$) + " " + $2).c_str());
+    std::strcpy($$, (std::string($$) + " " + $2).c_str());
   };
-
 %%
 
-void print_sheet(const Sheet* sheet) {
-  if (sheet == nullptr)
-    return;
-
-  for (auto& rule : *sheet->rules) {
-    cout << rule->selector << endl;
-
-    if (rule->properties) {
-      for (auto& property : *rule->properties) {
-        cout << property->name << ":" << property->value << endl;
-      }
-    }
-    
-    print_sheet(rule->children);
-  }
-}
-
 int main() {
-    yyparse();
-    print_sheet(sheet);
-    return 0;
+  yyparse();
+  print_sheet(sheet);
+  return 0;
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+  fprintf(stderr, "Error: %s\n", s);
 }
