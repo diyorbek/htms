@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 #include <stack>
+
 #include "ast.hh"
+#include "html_builder.hh"
 
 int yylex(void);
 void yyerror(const char *s);
@@ -85,7 +87,7 @@ value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER
 
 int main() {
   yyparse();
-  print_sheet(sheet);
+  build_html(std::cout, sheet, 2);
   return 0;
 }
 

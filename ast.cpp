@@ -1,6 +1,6 @@
 #include "ast.hh"
 
-#include <iomanip>
+#include <algorithm>
 #include <iostream>
 
 void print_sheet(const Sheet* sheet, int indent) {
@@ -10,12 +10,12 @@ void print_sheet(const Sheet* sheet, int indent) {
     return;
 
   for (auto& rule : *sheet->rules) {
-    cout << setfill(' ') << setw(indent + 1);
+    fill_n(ostream_iterator<char>(cout), indent, '#');
     cout << rule->selector << endl;
 
     if (rule->properties) {
       for (auto& property : *rule->properties) {
-        cout << setfill(' ') << setw(indent + 3);
+        fill_n(ostream_iterator<char>(cout), indent + 2, '-');
         cout << property->name << ": " << property->value << endl;
       }
     }
