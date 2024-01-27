@@ -8,10 +8,10 @@
 #include "ast.hh"
 #include "html_builder.hh"
 
-int yylex(void);
-void yyerror(const char *s);
+extern int yylex(void);
+extern void yyerror(const char *s);
 
-Sheet* sheet;
+extern Sheet* sheet;
 %}
 
 
@@ -84,12 +84,6 @@ value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER
     std::strcpy($$, (std::string($$) + " " + $2).c_str());
   };
 %%
-
-int main() {
-  yyparse();
-  build_html(std::cout, sheet, 2);
-  return 0;
-}
 
 void yyerror(const char *s) {
   fprintf(stderr, "Error: %s\n", s);

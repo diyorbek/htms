@@ -54,7 +54,7 @@ combined_value="selector{
 }"
 
 for variable in $(compgen -v | grep -E "(rule_list|selector|property|value)"); do
-    result=`echo ${!variable} | ./parser 2>&1 > /dev/null`
+    result=`echo ${!variable} | ./htms 2>&1 > /dev/null`
     if [ ${#result} == "0" ]; then
       echo -e "\033[32m" $variable
     else
