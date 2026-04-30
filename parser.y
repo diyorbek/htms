@@ -77,11 +77,11 @@ property: IDENTIFIER COLON value SEMICOLON {
     $$ = new Property{$1, $3};
   };
 
-value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER 
+value: SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING | UNIT | IDENTIFIER
   | value UNIT {
-    std::strcpy($$, (std::string($$) + " " + $2).c_str());
+    $$ = strdup((std::string($1) + " " + $2).c_str());
   } | value IDENTIFIER {
-    std::strcpy($$, (std::string($$) + " " + $2).c_str());
+    $$ = strdup((std::string($1) + " " + $2).c_str());
   };
 %%
 
