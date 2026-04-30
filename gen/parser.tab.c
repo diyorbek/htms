@@ -82,7 +82,7 @@ extern void yyerror(const char *s);
 
 extern Sheet* sheet;
 
-#line 86 "parser.tab.c"
+#line 86 "gen/parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -1088,7 +1088,7 @@ yyreduce:
   case 2: /* markup_sheet: %empty  */
 #line 47 "parser.y"
               { (yyval.sheet) = new Sheet{}; }
-#line 1092 "parser.tab.c"
+#line 1092 "gen/parser.tab.c"
     break;
 
   case 3: /* markup_sheet: rule_list  */
@@ -1097,7 +1097,7 @@ yyreduce:
     (yyval.sheet) = new Sheet{(yyvsp[0].rule_list)};
     sheet = (yyval.sheet);
   }
-#line 1101 "parser.tab.c"
+#line 1101 "gen/parser.tab.c"
     break;
 
   case 4: /* rule_list: rule  */
@@ -1106,7 +1106,7 @@ yyreduce:
     (yyval.rule_list) = new std::vector<Rule*>();
     (yyval.rule_list)->push_back((yyvsp[0].rule));
   }
-#line 1110 "parser.tab.c"
+#line 1110 "gen/parser.tab.c"
     break;
 
   case 5: /* rule_list: rule_list rule  */
@@ -1114,7 +1114,7 @@ yyreduce:
                      {
     (yyval.rule_list)->push_back((yyvsp[0].rule));
   }
-#line 1118 "parser.tab.c"
+#line 1118 "gen/parser.tab.c"
     break;
 
   case 6: /* rule: IDENTIFIER LBRACE RBRACE  */
@@ -1122,7 +1122,7 @@ yyreduce:
                                {
     (yyval.rule) = new Rule{(yyvsp[-2].strval)};
   }
-#line 1126 "parser.tab.c"
+#line 1126 "gen/parser.tab.c"
     break;
 
   case 7: /* rule: IDENTIFIER LBRACE property_list RBRACE  */
@@ -1130,7 +1130,7 @@ yyreduce:
                                              {
     (yyval.rule) = new Rule{(yyvsp[-3].strval), (yyvsp[-1].property_list)};
   }
-#line 1134 "parser.tab.c"
+#line 1134 "gen/parser.tab.c"
     break;
 
   case 8: /* rule: IDENTIFIER LBRACE property_list rule_list RBRACE  */
@@ -1138,7 +1138,7 @@ yyreduce:
                                                        {
     (yyval.rule) = new Rule{(yyvsp[-4].strval), (yyvsp[-2].property_list), new Sheet{(yyvsp[-1].rule_list)}};
   }
-#line 1142 "parser.tab.c"
+#line 1142 "gen/parser.tab.c"
     break;
 
   case 9: /* rule: IDENTIFIER LBRACE rule_list RBRACE  */
@@ -1146,7 +1146,7 @@ yyreduce:
                                          {
     (yyval.rule) = new Rule{(yyvsp[-3].strval), nullptr, new Sheet{(yyvsp[-1].rule_list)}};
   }
-#line 1150 "parser.tab.c"
+#line 1150 "gen/parser.tab.c"
     break;
 
   case 10: /* property_list: property  */
@@ -1155,7 +1155,7 @@ yyreduce:
     (yyval.property_list) = new std::vector<Property*>();
     (yyval.property_list)->push_back((yyvsp[0].property));
   }
-#line 1159 "parser.tab.c"
+#line 1159 "gen/parser.tab.c"
     break;
 
   case 11: /* property_list: property_list property  */
@@ -1163,7 +1163,7 @@ yyreduce:
                              {
     (yyval.property_list)->push_back((yyvsp[0].property));
   }
-#line 1167 "parser.tab.c"
+#line 1167 "gen/parser.tab.c"
     break;
 
   case 12: /* property: IDENTIFIER COLON value SEMICOLON  */
@@ -1171,7 +1171,7 @@ yyreduce:
                                            {
     (yyval.property) = new Property{(yyvsp[-3].strval), (yyvsp[-1].strval)};
   }
-#line 1175 "parser.tab.c"
+#line 1175 "gen/parser.tab.c"
     break;
 
   case 17: /* value: value UNIT  */
@@ -1179,7 +1179,7 @@ yyreduce:
                {
     (yyval.strval) = strdup((std::string((yyvsp[-1].strval)) + " " + (yyvsp[0].strval)).c_str());
   }
-#line 1183 "parser.tab.c"
+#line 1183 "gen/parser.tab.c"
     break;
 
   case 18: /* value: value IDENTIFIER  */
@@ -1187,11 +1187,11 @@ yyreduce:
                        {
     (yyval.strval) = strdup((std::string((yyvsp[-1].strval)) + " " + (yyvsp[0].strval)).c_str());
   }
-#line 1191 "parser.tab.c"
+#line 1191 "gen/parser.tab.c"
     break;
 
 
-#line 1195 "parser.tab.c"
+#line 1195 "gen/parser.tab.c"
 
       default: break;
     }
