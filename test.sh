@@ -91,3 +91,30 @@ check_output "multi-token identifier value" \
     "a { font: bold italic large; }" \
     "<a style=\"font:bold italic large;\">
 </a>"
+
+check_output "class selector becomes div" \
+    ".foo { color: red; }" \
+    "<div class=\"foo\" style=\"color:red;\">
+</div>"
+
+check_output "id selector becomes div" \
+    "#bar { color: blue; }" \
+    "<div id=\"bar\" style=\"color:blue;\">
+</div>"
+
+check_output "class selector with no properties" \
+    ".foo {}" \
+    "<div class=\"foo\">
+</div>"
+
+check_output "id selector with no properties" \
+    "#foo {}" \
+    "<div id=\"foo\">
+</div>"
+
+check_output "nested class selectors" \
+    ".outer { .inner {} }" \
+    "<div class=\"outer\">
+  <div class=\"inner\">
+  </div>
+</div>"
