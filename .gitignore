@@ -1,5 +1,2 @@
-htms 
-parser.tab.c
-lex.yy.c 
-parser.tab.h
+htms
 parser.output
