@@ -54,10 +54,40 @@ combined_value="selector{
 }"
 
 for variable in $(compgen -v | grep -E "(rule_list|selector|property|value)"); do
-    result=`echo ${!variable} | ./htms 2>&1 > /dev/null`
+    result=`echo "${!variable}" | ./htms 2>&1 > /dev/null`
     if [ ${#result} == "0" ]; then
       echo -e "\033[32m" $variable
     else
       echo -e "\033[31m" $variable
     fi
 done
+
+check_output() {
+    local name="$1"
+    local input="$2"
+    local expected="$3"
+    local actual
+    actual=$(echo "$input" | ./htms 2>/dev/null)
+    if [ "$actual" = "$expected" ]; then
+      echo -e "\033[32m" $name
+    else
+      echo -e "\033[31m" $name
+      echo "  expected: $(echo "$expected" | tr '\n' '|')"
+      echo "  actual:   $(echo "$actual" | tr '\n' '|')"
+    fi
+}
+
+check_output "multi-token unit value" \
+    "a { margin: 10px 5px; }" \
+    "<a style=\"margin:10px 5px;\">
+</a>"
+
+check_output "many-token unit value" \
+    "a { p: 1px 2px 3px 4px 5px 6px 7px 8px 9px 10px; }" \
+    "<a style=\"p:1px 2px 3px 4px 5px 6px 7px 8px 9px 10px;\">
+</a>"
+
+check_output "multi-token identifier value" \
+    "a { font: bold italic large; }" \
+    "<a style=\"font:bold italic large;\">
+</a>"
