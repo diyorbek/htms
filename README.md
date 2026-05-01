@@ -25,14 +25,14 @@ make regen-clean && make
 `htms` reads source from stdin and writes HTML to stdout.
 
 ```sh
-echo "div { color: red; span { property: 'hi'; } }" | ./htms
+echo "div { backgroud: green; span { color: white; } }" | ./htms
 ```
 
 Output:
 
 ```html
-<div style="color:red;">
-  <span style="property:'hi';"> </span>
+<div style="backgroud: green;">
+  <span style="color: white;"> </span>
 </div>
 ```
 
